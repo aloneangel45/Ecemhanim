@@ -12,7 +12,7 @@
       background-color: #ffe6f0;
       font-family: 'Comic Sans MS', cursive;
       text-align: center;
-      transition: background-color 2s ease; /* Arka planın 2 saniyede değişmesini sağlar */
+      transition: background-color 2s ease;
     }
 
     #question {
@@ -44,7 +44,7 @@
     #noBtn {
       background-color: #ccc;
       position: absolute;
-      z-index: 999; /* Butonların üzerine gelmesi engellenmemeli */
+      z-index: 999;
     }
 
     #response {
@@ -72,7 +72,6 @@
       z-index: -1;
     }
 
-    /* Metin animasyonu */
     @keyframes typing {
       from {
         width: 0;
@@ -86,37 +85,34 @@
       display: inline-block;
       overflow: hidden;
       white-space: nowrap;
-      border-right: .1em solid black; /* İmleç gibi görünsün diye */
+      border-right: .1em solid black;
       animation: typing 4s steps(30) 1s 1 normal both;
     }
 
-    /* Mobil uyumlu tasarım */
     @media screen and (max-width: 768px) {
       body {
-        font-size: 14px; /* Mobil ekranlarda daha küçük font */
+        font-size: 14px;
       }
 
       h1, h2, h3 {
-        font-size: 1.5em; /* Başlıklar küçük ekranlar için daha küçük */
+        font-size: 1.5em;
       }
 
       .content {
-        padding: 10px; /* İçerik alanına uygun boşluk */
+        padding: 10px;
       }
 
       button {
-        font-size: 14px; /* Buton font boyutunu küçültme */
-        padding: 8px 16px; /* Buton boyutlarını ayarlama */
+        font-size: 14px;
+        padding: 8px 16px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Kalp yağmuru -->
   <canvas id="heartCanvas"></canvas>
 
-  <!-- Soru alanı -->
   <div id="question">
     <img src="köpke.jpg" alt="Kalbim"><br>
     <span class="typing">Bana aşık mısın?</span>
@@ -124,7 +120,6 @@
   <button id="yesBtn">Evet</button>
   <button id="noBtn">Hayır</button>
 
-  <!-- Cevap ve video -->
   <div id="response">Ben de sana çok aşığım! 💖</div>
   <div id="video">
     <video id="myVideo" controls autoplay muted>
@@ -133,10 +128,8 @@
     </video>
   </div>
 
-  <!-- Konfeti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- Ana JS -->
   <script>
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
@@ -145,31 +138,28 @@
     const video = document.getElementById('myVideo');
 
     yesBtn.addEventListener('click', () => {
-      response.style.display = 'block';  // "Ben de sana çok aşığım" yazısını göster
-      videoWrapper.style.display = 'block';  // Videoyu göster
-      video.currentTime = 50;  // Videonun başlama zamanını ayarla (örneğin 50. saniyede başlasın)
-      video.muted = false;     // Sesi aç
+      response.style.display = 'block';
+      videoWrapper.style.display = 'block';
+      video.currentTime = 50;
+      video.muted = false;
       video.play();
       confetti();
 
-      // Evet butonuna tıklanınca arka planın yavaşça siyah olması
       setTimeout(() => {
-        document.body.style.backgroundColor = "black";  // Ekranı siyah yap
-        // Diğer öğeleri gizle
+        document.body.style.backgroundColor = "black";
         document.getElementById('question').style.display = 'none';
         document.getElementById('yesBtn').style.display = 'none';
         document.getElementById('noBtn').style.display = 'none';
-      }, 100);  // 100 ms gecikme ile başlat
+      }, 1000); // Gecikme 1 saniyeye çıkarıldı
     });
 
     noBtn.addEventListener('mouseover', () => {
-      const x = Math.random() * (window.innerWidth - 100);
-      const y = Math.random() * (window.innerHeight - 50);
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
     });
 
-    // Fareyi takip eden kalp animasyonu
     const canvas = document.getElementById('heartCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -206,7 +196,7 @@
     }
 
     function addHeart(e) {
-      hearts.push(new Heart(e.clientX, e.clientY)); // Fare pozisyonuna yeni kalp ekliyoruz
+      hearts.push(new Heart(e.clientX, e.clientY));
     }
 
     function animate() {
@@ -215,7 +205,7 @@
       requestAnimationFrame(animate);
     }
 
-    canvas.addEventListener('mousemove', addHeart); // Fare hareket ettiğinde kalp ekle
+    canvas.addEventListener('mousemove', addHeart);
 
     animate();
   </script>
