@@ -12,7 +12,7 @@
       background-color: #ffe6f0;
       font-family: 'Comic Sans MS', cursive;
       text-align: center;
-      transition: background-color 5s ease; /* Arka planın 5 saniyede değişmesini sağlar */
+      transition: background-color 2s ease; /* Arka planın 2 saniyede değişmesini sağlar */
     }
 
     #question {
@@ -44,6 +44,7 @@
     #noBtn {
       background-color: #ccc;
       position: absolute;
+      z-index: 999; /* Butonların üzerine gelmesi engellenmemeli */
     }
 
     #response {
@@ -158,7 +159,7 @@
         document.getElementById('question').style.display = 'none';
         document.getElementById('yesBtn').style.display = 'none';
         document.getElementById('noBtn').style.display = 'none';
-      }, 0);  // Hızlıca başlatmak için 0 ms gecikme ile
+      }, 100);  // 100 ms gecikme ile başlat
     });
 
     noBtn.addEventListener('mouseover', () => {
