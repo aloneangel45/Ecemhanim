@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bana Aşık Mısın?</title>
+  <!-- Google Fonts Ekleniyor -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow-x: hidden;
       background-color: #ffe6f0;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Roboto', sans-serif; /* Türkçe karakter desteği için güncellendi */
       text-align: center;
       transition: background-color 2s ease;
     }
@@ -94,17 +96,17 @@
         font-size: 14px;
       }
 
-      h1, h2, h3 {
-        font-size: 1.5em;
-      }
-
-      .content {
-        padding: 10px;
+      #question img {
+        width: 150px;
       }
 
       button {
-        font-size: 14px;
-        padding: 8px 16px;
+        font-size: 12px;
+        padding: 10px 20px;
+      }
+
+      #noBtn {
+        max-width: 100px;
       }
     }
   </style>
@@ -123,7 +125,7 @@
   <div id="response">Ben de sana çok aşığım! 💖</div>
   <div id="video">
     <video id="myVideo" controls autoplay muted>
-      <source src="https://github.com/aloneangel45/Ecemhanim/blob/main/%C3%96zkan%20U%C4%9Fur%20-%20Severim.mp4" type="video/mp4">
+      <source src="https://raw.githubusercontent.com/aloneangel45/Ecemhanim/main/%C3%96zkan%20U%C4%9Fur%20-%20Severim.mp4" type="video/mp4">
       Tarayıcınız video oynatmayı desteklemiyor.
     </video>
   </div>
@@ -150,7 +152,7 @@
         document.getElementById('question').style.display = 'none';
         document.getElementById('yesBtn').style.display = 'none';
         document.getElementById('noBtn').style.display = 'none';
-      }, 1000); // Gecikme 1 saniyeye çıkarıldı
+      }, 1000);
     });
 
     noBtn.addEventListener('mouseover', () => {
@@ -206,6 +208,11 @@
     }
 
     canvas.addEventListener('mousemove', addHeart);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
     animate();
   </script>
