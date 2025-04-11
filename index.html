@@ -12,9 +12,8 @@
       background-color: #ffe6f0;
       font-family: 'Comic Sans MS', cursive;
       text-align: center;
+      transition: background-color 5s ease; /* Arka planın 5 saniyede değişmesini sağlar */
     }
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     #question {
       margin-top: 80px;
@@ -89,6 +88,26 @@
       border-right: .1em solid black; /* İmleç gibi görünsün diye */
       animation: typing 4s steps(30) 1s 1 normal both;
     }
+
+    /* Mobil uyumlu tasarım */
+    @media screen and (max-width: 768px) {
+      body {
+        font-size: 14px; /* Mobil ekranlarda daha küçük font */
+      }
+
+      h1, h2, h3 {
+        font-size: 1.5em; /* Başlıklar küçük ekranlar için daha küçük */
+      }
+
+      .content {
+        padding: 10px; /* İçerik alanına uygun boşluk */
+      }
+
+      button {
+        font-size: 14px; /* Buton font boyutunu küçültme */
+        padding: 8px 16px; /* Buton boyutlarını ayarlama */
+      }
+    }
   </style>
 </head>
 <body>
@@ -125,12 +144,21 @@
     const video = document.getElementById('myVideo');
 
     yesBtn.addEventListener('click', () => {
-      response.style.display = 'block';
-      videoWrapper.style.display = 'block';
-      video.currentTime = 50;  // istediğin saniye
-      video.muted = false;     // sesi aç
+      response.style.display = 'block';  // "Ben de sana çok aşığım" yazısını göster
+      videoWrapper.style.display = 'block';  // Videoyu göster
+      video.currentTime = 50;  // Videonun başlama zamanını ayarla (örneğin 50. saniyede başlasın)
+      video.muted = false;     // Sesi aç
       video.play();
       confetti();
+
+      // Evet butonuna tıklanınca arka planın yavaşça siyah olması
+      setTimeout(() => {
+        document.body.style.backgroundColor = "black";  // Ekranı siyah yap
+        // Diğer öğeleri gizle
+        document.getElementById('question').style.display = 'none';
+        document.getElementById('yesBtn').style.display = 'none';
+        document.getElementById('noBtn').style.display = 'none';
+      }, 0);  // Hızlıca başlatmak için 0 ms gecikme ile
     });
 
     noBtn.addEventListener('mouseover', () => {
