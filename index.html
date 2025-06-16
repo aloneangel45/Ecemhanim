@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ecem'e Özel</title>
+<style>
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body, html {
+    height: 100%; width: 100%;
+    background: #fff0f5;
+    overflow: hidden;
+  }
+  #app {
+    height: 100vh; width: 100vw;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Loading Screen */
+  #loading {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(45deg, #e91e63, #ff69b4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+    transition: opacity 0.5s ease;
+  }
+  #loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .loading-heart {
+    width: 50px; height: 50px;
+    background: white;
+    clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 50% 80%, 20% 100%, 0% 35%);
+    animation: pulse 1.5s infinite;
+    margin-bottom: 20px;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+
+  section {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 100vw;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+  }
+  section.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Bölümler arası arka plan renk ve resimleri */
+  #section1 { 
+    background: linear-gradient(rgba(233, 30, 99, 0.3), rgba(233, 30, 99, 0.3)), 
+                url('images/askim.jpg') no-repeat center/cover;
+  }
+  #section2 { 
+    background: linear-gradient(135deg, #e91e63, #ff1744); 
+    color: white; 
+  }
+  #section3 { 
+    background: linear-gradient(45deg, #fff, #ffebee); 
+    color: #e91e63; 
+    cursor: default; 
+    position: relative; 
+    overflow: hidden; 
+  }
+  #section4 { 
+    background: linear-gradient(135deg, #000, #212121); 
+    color: white; 
+  }
+  #section5 { 
+    background: linear-gradient(135deg, #222, #424242); 
+    color: white; 
+  }
+
+  h1, h2 {
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    animation: fadeInUp 1s ease;
+  }
+  h1 { font-size: 3rem; margin-bottom: 1rem; }
+  h2 { font-size: 2rem; margin-bottom: 1rem; }
+  p, ul {
+    font-size: 1.2rem;
+    max-width: 600px;
+    text-align: center;
+    line-height: 1.5;
+    animation: fadeInUp 1s ease 0.3s both;
+  }
+  ul {
+    list-style: none;
+  }
+  ul li {
+    margin: 0.8em 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    transform: translateY(20px);
+    animation: slideInUp 0.8s ease forwards;
+  }
+  ul li:nth-child(1) { animation-delay: 0.1s; }
+  ul li:nth-child(2) { animation-delay: 0.2s; }
+  ul li:nth-child(3) { animation-delay: 0.3s; }
+  ul li:nth-child(4) { animation-delay: 0.4s; }
+  ul li:nth-child(5) { animation-delay: 0.5s; }
+  ul li:nth-child(6) { animation-delay: 0.6s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideInUp {
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Video bölüm */
+  #section4 video {
+    max-width: 90vw;
+    max-height: 70vh;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(233, 30, 99, 0.8);
+    transition: transform 0.3s ease;
+  }
+  #section4 video:hover {
+    transform: scale(1.02);
+  }
+
+  /* Progress Bar */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: #e91e63;
+    transition: width 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 0 10px #e91e63;
+  }
+
+  /* Sonraki butonu */
+  #nextBtn {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, #e91e63, #ff1744);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 18px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.5);
+    display: none;
+    z-index: 1000;
+    user-select: none;
+    transition: all 0.3s ease;
+  }
+  #nextBtn:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.7);
+  }
+
+  /* Hearts Counter */
+  #hearts-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(233, 30, 99, 0.9);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    display: none;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+  }
+
+  /* Kalp animasyonları */
+  #hearts {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .heart {
+    position: absolute;
+    width: 30px; height: 30px;
+    background: #e91e63;
+    clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 50% 80%, 20% 100%, 0% 35%);
+    animation: floatDown linear forwards;
+    user-select: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .heart:hover {
+    transform: scale(1.2);
+  }
+  @keyframes floatDown {
+    0% {opacity: 0; transform: translateY(-40px) scale(1) rotate(0deg);}
+    10% {opacity: 1;}
+    100% {opacity: 0; transform: translateY(100vh) scale(1.2) rotate(360deg);}
+  }
+
+  /* Yeni Galeri Slider Stilleri */
+  #photo-slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 90vw;
+    margin: 0 auto;
+    gap: 20px;
+  }
+  #photo-slider img {
+    max-width: 70vw;
+    max-height: 60vh;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+    user-select: none;
+    transition: transform 0.3s ease;
+    object-fit: cover;
+  }
+  #photo-slider img:hover {
+    transform: scale(1.05);
+  }
+  #photo-slider button {
+    font-size: 2rem;
+    background: linear-gradient(45deg, #e91e63, #ff1744);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+    transition: all 0.3s ease;
+  }
+  #photo-slider button:hover {
+    background: linear-gradient(45deg, #ff1744, #e91e63);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6);
+  }
+
+  /* Photo counter */
+  #photo-counter {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Click indicator */
+  .click-indicator {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    animation: bounce 2s infinite;
+    pointer-events: none;
+  }
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+  }
+
+  /* Error message */
+  .error-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(244, 67, 54, 0.9);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+    z-index: 2000;
+    backdrop-filter: blur(10px);
+  }
+
+  @media(max-width: 768px) {
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.6rem; }
+    p, ul li { font-size: 1rem; }
+    #photo-slider img {
+      max-width: 80vw;
+      max-height: 40vh;
+    }
+    #photo-slider button {
+      width: 50px; height: 50px;
+      font-size: 1.5rem;
+    }
+    #photo-slider {
+      gap: 10px;
+    }
+    section {
+      padding: 20px 15px;
+    }
+  }
+
+  @media(max-width: 480px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.4rem; }
+    p, ul li { font-size: 0.9rem; }
+    ul li {
+      margin: 0.5em 0;
+      padding: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-heart"></div>
+  <h2>Sürpriz Yükleniyor... 💕</h2>
+</div>
+
+<div id="progress-bar"></div>
+<div id="hearts-counter">Kalpler: <span id="heart-count">0</span> / 5</div>
+<div class="error-message" id="error-message">Bir hata oluştu. Lütfen sayfayı yenileyin.</div>
+
+<div id="app">
+
+  <section id="section1" class="active">
+    <h1>İyi ki doğdun Hayatımın Anlamı ❤️</h1>
+    <p>Seninle geçen her an güneş gibi parlıyor...</p>
+    <p><em>Devam et bakalımmm.</em></p>
+    <div class="click-indicator">👆 Tıkla</div>
+  </section>
+
+  <section id="section2">
+    <h2>Neden Sana Aşığımmmm</h2>
+    <ul>
+      <li>Gülüşünle günüm güzelleşiyor 😍</li>
+      <li>Yanında olmak huzur gibi 🕊️</li>
+      <li>Çok güzel ve çok tatlısın 😍</li>
+      <li>Seni gıcık etmesi çok tatlı 🕊️</li>
+      <li>Ne kadar sinir edersem ediyim seviyorsun 💫</li>
+      <li>Gözlerin çok aşık aşık bakıyor 💫</li>
+    </ul>
+    <p><em>Devam et bakalımmmm.</em></p>
+    <div class="click-indicator">👆 Tıkla</div>
+  </section>
+
+  <section id="section3" style="color:#e91e63;">
+    <h2>Minik Kalplerim 💖</h2>
+    <p>Ekranda aşağıdan yukarı doğru kalpler yağacak, tıkla 5 tanesini topla!</p>
+    <p><em>5 kalp toplandıktan sonra "Sonraki" butonu çıkacak.</em></p>
+    <div id="hearts"></div>
+  </section>
+
+  <section id="section4">
+    <h2>Sana Özel Video 🎥</h2>
+    <video id="video" controls preload="metadata" playsinline>
+      <source src="video/video1.mp4" type="video/mp4" />
+      <source src="video/your-video-file.mp4" type="video/mp4" />
+      Tarayıcınız video formatını desteklemiyor.
+    </video>
+    <p><em>Video yoksa müzik çalar. Devam etmek için tıkla.</em></p>
+    <div class="click-indicator">👆 Tıkla</div>
+  </section>
+
+  <section id="section5">
+    <h2>Birlikte Anılarımız 📸</h2>
+    <div id="photo-slider">
+      <button id="prevBtn" aria-label="Önceki Fotoğraf">‹</button>
+      <img id="currentPhoto" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='100%' height='100%' fill='%23f5f5f5'/><text x='50%' y='50%' font-family='Arial' font-size='16' fill='%23999' text-anchor='middle' dy='.3em'>Fotoğraf bulunamadı</text></svg>" alt="Fotoğraf 1" />
+      <button id="nextBtnGallery" aria-label="Sonraki Fotoğraf">›</button>
+    </div>
+    <div id="photo-counter">
+      <span id="current-photo-num">1</span> / <span id="total-photos">10</span>
+    </div>
+    <p><em>Sağ ve sol oklarla fotoğraflarımızı tek tek inceleyebilirsin hayatımmm.</em></p>
+    <div class="click-indicator">👆 Tekrar başlamak için tıkla</div>
+  </section>
+
+</div>
+
+<button id="nextBtn">► Sonraki</button>
+
+<audio id="bg-music" loop preload="auto">
+  <source src="video/Özkan Uğur - Severim - Kopya.mp3" type="audio/mp3" />
+  <source src="video/your-music-file.mp3" type="audio/mp3" />
+  Tarayıcınız ses formatını desteklemiyor.
+</audio>
+
+<script>
+  const sections = document.querySelectorAll('section');
+  const nextBtn = document.getElementById('nextBtn');
+  const heartsContainer = document.getElementById('hearts');
+  const music = document.getElementById('bg-music');
+  const video = document.getElementById('video');
+  const progressBar = document.getElementById('progress-bar');
+  const heartsCounter = document.getElementById('hearts-counter');
+  const heartCount = document.getElementById('heart-count');
+  const loading = document.getElementById('loading');
+  const errorMessage = document.getElementById('error-message');
+
+  let current = 0;
+  let heartsCollected = 0;
+  const heartsNeeded = 5;
+  let heartInterval;
+  let heartId = 0;
+
+  // Loading screen
+  setTimeout(() => {
+    loading.classList.add('hidden');
+  }, 2000);
+
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    setTimeout(() => {
+      errorMessage.style.display = 'none';
+    }, 3000);
+  }
+
+  function updateProgressBar() {
+    const progress = ((current + 1) / sections.length) * 100;
+    progressBar.style.width = progress + '%';
+  }
+
+  function playMusic() {
+    music.play().catch((error) => {
+      console.log('Müzik çalamıyor:', error);
+    });
+  }
+
+  function pauseMusic() {
+    music.pause();
+  }
+
+  function showSection(index) {
+    sections.forEach((sec,i) => {
+      sec.classList.toggle('active', i === index);
+    });
+
+    updateProgressBar();
+
+    // Hearts section reset
+    heartsCollected = 0;
+    heartCount.textContent = heartsCollected;
+    heartsContainer.innerHTML = '';
+    heartsContainer.style.pointerEvents = 'auto';
+    heartsCounter.style.display = 'none';
+
+    if(index === 3 || index === 4) {
+      nextBtn.style.display = 'block';
+    } else if(index === 2) {
+      nextBtn.style.display = 'none';
+      heartsCounter.style.display = 'block';
+      startHeartsRain();
+    } else {
+      nextBtn.style.display = 'none';
+      stopHeartsRain();
+    }
+
+    // Video bölümü (index 3) hariç tüm bölümlerde müzik çal
+    if(index === 3) {
+      video.pause();
+      video.currentTime = 0;
+      pauseMusic(); // Video bölümünde müzik durdur
+    } else {
+      playMusic(); // Diğer tüm bölümlerde müzik çal
+    }
+  }
+
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * 95 + '%';
+    const duration = 4000 + Math.random() * 3000;
+    heart.style.animationDuration = duration + 'ms';
+    heart.id = 'heart-' + heartId++;
+    
+    // Random colors for hearts
+    const colors = ['#e91e63', '#ff1744', '#ff69b4', '#f06292'];
+    heart.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    heartsContainer.appendChild(heart);
+    setTimeout(() => {
+      const el = document.getElementById(heart.id);
+      if(el) el.remove();
+    }, duration);
+  }
+
+  function startHeartsRain() {
+    if(heartInterval) clearInterval(heartInterval);
+    heartInterval = setInterval(createHeart, 600);
+  }
+
+  function stopHeartsRain() {
+    clearInterval(heartInterval);
+    heartsContainer.innerHTML = '';
+  }
+
+  showSection(current);
+
+  document.getElementById('app').addEventListener('click', (e) => {
+    // İlk tıklamada müziği başlat (mobil uyumluluk için)
+    if(music.paused && current !== 3) playMusic();
+
+    if(current === 2 || current === 3) return;
+
+    current++;
+    if(current >= sections.length) current = 0;
+    showSection(current);
+  });
+
+  heartsContainer.addEventListener('click', (e) => {
+    if(current !== 2) return;
+    if(!e.target.classList.contains('heart')) return;
+    
+    heartsCollected++;
+    heartCount.textContent = heartsCollected;
+    e.target.remove();
+
+    // Heart collect effect
+    e.target.style.transform = 'scale(1.5)';
+    e.target.style.transition = 'all 0.3s ease';
+
+    if(heartsCollected >= heartsNeeded) {
+      nextBtn.style.display = 'block';
+      heartsContainer.style.pointerEvents = 'none';
+      heartsCounter.innerHTML = '🎉 Tebrikler! Tüm kalpleri topladın! 🎉';
+      stopHeartsRain();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    current++;
+    if(current >= sections.length) current = 0;
+    showSection(current);
+  });
+
+  // Photo gallery with error handling
+  const photos = [
+    { src: 'images/köpke.jpg', alt: 'Fotoğraf 1' },
+    { src: 'images/görsel1.jpg', alt: 'Fotoğraf 2' },
+    { src: 'images/görsel2.jpg', alt: 'Fotoğraf 3' },
+    { src: 'images/görsel3.jpg', alt: 'Fotoğraf 4' },
+    { src: 'images/görsel4.jpg', alt: 'Fotoğraf 5' },
+    { src: 'images/görsel5.jpg', alt: 'Fotoğraf 6' },
+    { src: 'images/görsel6.jpg', alt: 'Fotoğraf 7' },
+    { src: 'images/görsel7.jpg', alt: 'Fotoğraf 8' },
+    { src: 'images/görsel8.jpg', alt: 'Fotoğraf 9' },
+    { src: 'images/görsel9.jpg', alt: 'Fotoğraf 10' }
+  ];
+
+  let currentPhotoIndex = 0;
+
+  const currentPhoto = document.getElementById('currentPhoto');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtnGallery = document.getElementById('nextBtnGallery');
+  const currentPhotoNum = document.getElementById('current-photo-num');
+  const totalPhotos = document.getElementById('total-photos');
+
+  totalPhotos.textContent = photos.length;
+
+  function updatePhoto() {
+    try {
+      const photo = photos[currentPhotoIndex];
+      currentPhoto.src = photo.src;
+      currentPhoto.alt = photo.alt;
+      currentPhotoNum.textContent = currentPhotoIndex + 1;
+    } catch (error) {
+      showError('Fotoğraf yüklenirken hata oluştu');
+    }
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+    updatePhoto();
+  });
+
+  nextBtnGallery.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+    updatePhoto();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (current === 4) { // Gallery section
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevBtn.click();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextBtnGallery.click();
+      }
+    }
+    if (e.key === ' ') { // Spacebar for next section
+      e.preventDefault();
+      if (current !== 2) {
+        document.getElementById('app').click();
+      }
+    }
+  });
+
+  // Touch gestures for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+
+  document.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    if (current === 4) { // Gallery section
+      const swipeThreshold = 50;
+      if (touchEndX < touchStartX - swipeThreshold) {
+        nextBtnGallery.click();
+      } else if (touchEndX > touchStartX + swipeThreshold) {
+        prevBtn.click();
+      }
+    }
+  }
+
+  // Image loading error handling
+  currentPhoto.addEventListener('error', () => {
+    currentPhoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="%23f5f5f5"/><text x="50%" y="40%" font-family="Arial" font-size="16" fill="%23999" text-anchor="middle" dy=".3em">Fotoğraf bulunamadı</text><text x="50%" y="60%" font-family="Arial" font-size="12" fill="%23999" text-anchor="middle" dy=".3em">😔</text></svg>';
+  });
+
+  // Audio context for better mobile support
+  let audioContext;
+  function initAudio() {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+  }
+
+  // Better music handling
+  music.addEventListener('canplaythrough', () => {
+    console.log('Müzik yüklenmeye hazır');
+  });
+
+  music.addEventListener('error', (e) => {
+    console.log('Müzik yüklenemedi:', e);
+  });
+
+  // Enhanced click handling for better UX
+  document.addEventListener('click', initAudio, { once: true });
+
+  updatePhoto();
+
+  // Prevent context menu on long press
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  });
+
+  // Disable text selection
+  document.addEventListener('selectstart', (e) => {
+    e.preventDefault();
+  });
+
+  // Performance optimization
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      // Resize handling if needed
+    }, 250);
+  });
+
+  // Preload next section resources
+  function preloadResources() {
+    // Preload images
+    photos.forEach((photo, index) => {
+      if (index < 3) { // Preload first 3 images
+        const img = new Image();
+        img.src = photo.src;
+      }
+    });
+  }
+
+  setTimeout(preloadResources, 3000);
+
+</script>
+
+</body>
+</html>
